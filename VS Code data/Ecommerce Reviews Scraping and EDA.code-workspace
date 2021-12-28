@@ -1,9 +1,9 @@
 {
     "folders": [
-		{
-			"path": ".."
-		}
-	],
+        {
+            "path": ".."
+        }
+    ],
 	"settings": {
 		"jupyter.jupyterServerType": "local"
 	}
