@@ -46,7 +46,7 @@ time.sleep(0.5) # Pause to let the page open
 siteHeight = browser.execute_script("return document.body.scrollHeight") # Get full page height 
 scrollHeight = siteHeight * REVIEWS_SCROLL_HEIGHT # Get the height at which reviews is present. We have it hardcoded here
 browser.execute_script("window.scrollTo(0,{})".format(scrollHeight)) # Scroll to reviews section
-time.sleep(2) # Let the reviews section load
+time.sleep(1) # Let the reviews section load
 
 soup = BeautifulSoup(browser.page_source, 'html.parser') # Parse page using BS4
 maxReviews = soup.find('span', {'class':'reviews-qa-label font-color-gray'}).text.split()[0] # Get a count of max reviews
@@ -66,6 +66,7 @@ while count_reviews < int(maxReviews):
                 break
     time.sleep(2)
 
+
     soup = BeautifulSoup(browser.page_source, 'html.parser')
     reviews = soup.find_all('div', {'class': lambda e: 'yotpo-review yotpo-regular-box' in e if e else False})
     for review in reviews:
@@ -73,7 +74,13 @@ while count_reviews < int(maxReviews):
         rating = review.find('span', {'class': 'sr-only'}).text
         dt = review.find('span', {'class': 'y-label yotpo-review-date'}).text
         heading = review.find('div', {'class': 'content-title yotpo-font-bold'}).text
-        text = review.find('div', {'class': 'content-review'}).text
+        text_shown = review.find('div', {'class': 'content-review'}).find(text=True, recursive=False)
+        text_hidden_major = review.find('p', {'class': 'rest-content-collapsed'})
+        if text_hidden_major is None:
+            text_hidden = ''
+        else:
+            text_hidden = text_hidden_major.find(text=True, recursive=False)
+        text = text_shown + text_hidden
 
         element = [name, rating, dt, heading, text]
         list_reviews.append(element)
